@@ -1,0 +1,44 @@
+{
+  "name": "open-storage",
+  "version": "0.0.1",
+  "description": "backend part for inteligent file storage",
+  "main": "server.js",
+  "scripts": {
+    "test": "standard && mocha test --timeout 5000",
+    "start": "node server.js",
+    "startdebug": "node --inspect-brk server.js",
+    "precommit": "npm test",
+    "testdebug": "./node_modules/.bin/mocha --inspect-brk --compilers coffee:coffee-script/register --timeout 5000 test"
+  },
+  "keywords": [
+    "voting",
+    "democracy"
+  ],
+  "repository": "https://github.com/vencax/opendemocracy",
+  "author": "Vaclav Klecanda <vencax77@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "body-parser": "^1.15.2",
+    "bookshelf": "vencax/bookshelf",
+    "cors": "^2.8.1",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.3",
+    "express-jwt": "^5.1.0",
+    "kalamata": "vencax/kalamata#v2",
+    "knex": "^0.13.0",
+    "moment": "^2.18.1",
+    "mv": "^2.1.1",
+    "tus-node-server": "vencax/tus-node-server",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-http": "^3.0.0",
+    "husky": "^0.11.9",
+    "jsonwebtoken": "^7.4.3",
+    "mocha": "^3.5.0",
+    "sqlite3": "^3.1.8",
+    "standard": "^10.0.3"
+  }
+}
