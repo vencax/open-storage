@@ -14,7 +14,7 @@
     "voting",
     "democracy"
   ],
-  "repository": "https://github.com/vencax/opendemocracy",
+  "repository": "https://github.com/vencax/open-storage",
   "author": "Vaclav Klecanda <vencax77@gmail.com>",
   "license": "MIT",
   "dependencies": {

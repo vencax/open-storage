@@ -4,6 +4,7 @@ const mv = require('mv')
 const express = require('express')
 const TUSServer = require('tus-node-server')
 const db = require('./db')
+const CONSTS = require('./consts')
 
 const server = new TUSServer.Server()
 
@@ -29,7 +30,7 @@ function moveFromUploadFolder (src, fileObj) {
 module.exports = () => {
   //
   server.on(TUSServer.EVENTS.EVENT_ENDPOINT_CREATED, (evt) => {
-    db.knex('incompletes').insert({
+    db.knex(CONSTS.TABLENAMES.INCOMPLETES).insert({
       uid: evt.File.id,
       params: JSON.stringify(evt.req.query)
     }).then(res => {})
@@ -37,7 +38,7 @@ module.exports = () => {
 
   server.on(TUSServer.EVENTS.EVENT_UPLOAD_COMPLETE, (evt) => {
     let data = null
-    const incomplete = db.knex('incompletes').where('uid', evt.file.id)
+    const incomplete = db.knex(CONSTS.TABLENAMES.INCOMPLETES).where('uid', evt.file.id)
     incomplete.first()
     .then(found => {
       const params = JSON.parse(found.params)
@@ -46,7 +47,7 @@ module.exports = () => {
         tags: 'untagged',
         created: new Date()
       }, params)
-      return db.knex('files').insert(data)
+      return db.knex(CONSTS.TABLENAMES.FILES).insert(data)
     })
     .then(affected => {
       return moveFromUploadFolder(evt.file.id, data)
