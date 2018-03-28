@@ -1,13 +1,16 @@
 /* global describe it before after */
 const fs = require('fs')
+const path = require('path')
 const chai = require('chai')
 const chaiHttp = require('chai-http')
+const rimraf = require('rimraf')
 chai.use(chaiHttp)
 const should = chai.should()
 
 process.env.SERVER_SECRET = 'fhdsakjhfkjal'
 const rand = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 15)
 process.env.DATABASE_URL = rand + 'test.sqlite'
+process.env.DATA_FOLDER = path.resolve('./.testuploads')
 process.env.NODE_ENV = 'test'
 const port = process.env.PORT || 3333
 const g = {
@@ -47,7 +50,9 @@ describe('app', () => {
   after(done => {
     g.server.close()
     fs.unlinkSync(process.env.DATABASE_URL)
-    done()
+    rimraf(process.env.DATA_FOLDER, () => {
+      done()
+    })
   })
 
   it('should exist', (done) => {

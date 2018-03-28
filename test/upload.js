@@ -1,6 +1,9 @@
 /* global describe it */
 const chai = require('chai')
-// const should = chai.should()
+const assert = chai.assert
+const sleep = require('sleep-promise')
+const path = require('path')
+const fs = require('fs')
 
 module.exports = function (g) {
   //
@@ -9,30 +12,36 @@ module.exports = function (g) {
   const content = cntr.map(i => {
     return cntr.join('')
   }).join('')
+  const filename = 'pokus.txt'
 
   return describe('upload', () => {
     //
     it('shall upload bare file', () => {
-      return r.post('/upload')
+      let fileId = null
+      return r.post(`/upload?filename=${filename}`)
       .set('Upload-Length', 100).set('Tus-Resumable', '1.0.0')
       .then(res => {
         res.should.have.status(201)
-        return new Promise((resolve, reject) => {
-          setTimeout(() => {
-            const parts = res.header.location.split('/')
-            const fileId = parts[parts.length - 1]
-            const req = r.patch(`/upload/${fileId}`)
-            .set('Tus-Resumable', '1.0.0')
-            .set('upload-offset', 0)
-            .set('Upload-Length', 100)
-            .set('Content-Type', 'application/offset+octet-stream')
-            .send(content)
-            resolve(req)
-          }, 5000)
-        })
+        const parts = res.header.location.split('/')
+        fileId = parts[parts.length - 1]
+        return sleep(500)
+      })
+      .then(() => {
+        return r.patch(`/upload/tus/${fileId}`)
+        .set('Tus-Resumable', '1.0.0')
+        .set('upload-offset', 0)
+        .set('Upload-Length', 100)
+        .set('Content-Type', 'application/offset+octet-stream')
+        .send(content)
       })
       .then(res => {
         res.should.have.status(204)
+        return sleep(500)
+      })
+      .then(() => {
+        const createdFile = path.join(process.env.DATA_FOLDER, filename)
+        const uploadedFileExists = fs.existsSync(createdFile)
+        assert.isTrue(uploadedFileExists)
       })
     })
   })
